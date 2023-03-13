@@ -32,18 +32,19 @@ export const clearValueByType = (obj, key) => {
 
 export const updateFiltersBasedOnQuery = (router, filterState) => {
   const availableFilters = Object.keys(filterState);
-  const currentQuery = { ...router.currentRoute.query };
-  console.log(currentQuery);
-  // for (const [k, v] of currentQuery) {
-  //   if (availableFilters.includes(k)) {
-  //     if (k === "priceRange") {
-  //       filterState[k][0] = Number(v[0]);
-  //       filterState[k][1] = Number(v[1]);
-  //     } else if (Array.isArray(v)) {
-  //       filterState[k] = v;
-  //     } else {
-  //       console.log(v);
-  //     }
-  //   }
-  // }
+  Object.entries(router.currentRoute.query).forEach(([k, v]) => {
+    if (availableFilters.includes(k)) {
+      if (k === "priceRange") {
+        filterState[k][0] = Number(v[0]);
+        filterState[k][1] = Number(v[1]);
+      } else if (Array.isArray(v)) {
+        filterState[k] = v;
+      } else if (v === "true") {
+        filterState[k] = true;
+      } else if (typeof v === "string") {
+        if (typeof filterState[k] === "string") filterState[k] = v;
+        else filterState[k].push(v);
+      }
+    }
+  });
 };

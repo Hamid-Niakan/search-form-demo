@@ -15,7 +15,7 @@
     <InputCheckboxGroup
       v-else-if="filter.type === 'checkbox-group'"
       :label="filter.label"
-      :options="filter.options"
+      :options="checkboxGroupFilter ? filter.options.filter(checkboxGroupFilter) : filter.options"
       :model-value="filterState[filter.name]"
       @update:modelValue="onChange(filter.name, $event, $router)" />
 
@@ -26,7 +26,11 @@
       @update:modelValue="onChange(filter.name, $event, $router)" />
 
     <InputDropdown
-    v-else :label="filter.label" :options="filter.options" @update:modelValue="onChange(filter.name, $event, $router)" />
+      v-else
+      :label="filter.label"
+      :options="filter.options"
+      :model-value="filterState[filter.name]"
+      @update:modelValue="onChange(filter.name, $event, $router)" />
   </div>
 </template>
 
@@ -41,6 +45,11 @@ export default {
       type: Object,
       default: () => ({}),
       required: true,
+    },
+    checkboxGroupFilter: {
+      type: [Function, Boolean],
+      default: false,
+      required: false,
     },
   },
   computed: {

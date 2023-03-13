@@ -59,8 +59,8 @@ export const useFilterStore = defineStore("filter", {
         }
         mapped.push(x);
       });
-      this.filters = mapped;
       updateFiltersBasedOnQuery(router, this.filterState);
+      this.filters = mapped;
     },
     onChange(name, value, router) {
       this.filterState[name] = value;
