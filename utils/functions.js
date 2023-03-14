@@ -16,11 +16,9 @@ export const getInitValueByFilterType = (filterType) => {
 };
 
 export const replaceQuery = (router, filterState) => {
-  const _filterState = Object.assign({}, filterState);
-  Object.entries(_filterState).forEach(([k, v]) => {
-    if (!v || (Array.isArray(v) && v.length === 0)) delete _filterState[k];
-  });
-  router.replace({ query: _filterState });
+  const newRout =
+    router.currentRoute.fullPath.split("?")[0] + getCustomQuery(filterState);
+  router.push(newRout);
 };
 
 export const clearValueByType = (obj, key) => {
@@ -32,7 +30,8 @@ export const clearValueByType = (obj, key) => {
 
 export const updateFiltersBasedOnQuery = (router, filterState) => {
   const availableFilters = Object.keys(filterState);
-  Object.entries(router.currentRoute.query).forEach(([k, v]) => {
+  const queryObject = getObjectFromQuery(router.currentRoute.fullPath);
+  Object.entries(queryObject).forEach(([k, v]) => {
     if (availableFilters.includes(k)) {
       if (k === "priceRange") {
         filterState[k][0] = Number(v[0]);
@@ -47,4 +46,32 @@ export const updateFiltersBasedOnQuery = (router, filterState) => {
       }
     }
   });
+};
+
+const getCustomQuery = (queryObj) => {
+  const clone = Object.assign({}, queryObj);
+  Object.entries(clone).forEach(([k, v]) => {
+    const isArray = Array.isArray(v);
+    if (!v || (isArray && !v.length)) delete clone[k];
+    else if (isArray && v.length) clone[k] = v.join("--");
+  });
+  return (
+    "?" +
+    Object.keys(clone)
+      .map((k) => k + "~" + clone[k])
+      .join("+")
+  );
+};
+
+const getObjectFromQuery = (str) => {
+  console.log(str);
+  const queryString = str.split("?")[1];
+  if (!queryString) return {};
+  const queryArray = str.split("?")[1].split("+");
+  const queryObj = {};
+  queryArray.forEach((x) => {
+    const [k, v] = x.split("~");
+    queryObj[k] = v.includes("--") ? v.split("--") : v;
+  });
+  return queryObj;
 };
