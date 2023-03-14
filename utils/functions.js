@@ -64,7 +64,6 @@ const getCustomQuery = (queryObj) => {
 };
 
 const getObjectFromQuery = (str) => {
-  console.log(str);
   const queryString = str.split("?")[1];
   if (!queryString) return {};
   const queryArray = str.split("?")[1].split("+");
