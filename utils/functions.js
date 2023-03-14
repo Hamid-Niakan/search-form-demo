@@ -55,12 +55,13 @@ const getCustomQuery = (queryObj) => {
     if (!v || (isArray && !v.length)) delete clone[k];
     else if (isArray && v.length) clone[k] = v.join("--");
   });
-  return (
+  const keys = Object.keys(clone);
+  return keys.length ? (
     "?" +
-    Object.keys(clone)
+    keys
       .map((k) => k + "~" + clone[k])
       .join("+")
-  );
+  ) : '';
 };
 
 const getObjectFromQuery = (str) => {
