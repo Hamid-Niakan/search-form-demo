@@ -18,7 +18,7 @@ export const getInitValueByFilterType = (filterType) => {
 export const replaceQuery = (router, filterState) => {
   const newRout =
     router.currentRoute.fullPath.split("?")[0] + getCustomQuery(filterState);
-  router.push(newRout);
+  router.replace(newRout);
 };
 
 export const clearValueByType = (obj, key) => {
